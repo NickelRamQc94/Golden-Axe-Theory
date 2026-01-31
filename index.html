@@ -1,70 +1,10 @@
-<!doctype html>
-<html lang="fr">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Golden‑Axe Theory — Nickel David Grenier</title>
-  <style>
-    :root { --bg:#0f1720; --card:#0b1220; --accent:#f59e0b; --muted:#9ca3af; color-scheme: dark; }
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 2rem; background: linear-gradient(180deg,var(--bg),#071023); color: #e6eef8; }
-    .container{max-width:900px;margin:auto}
-    header{display:flex;align-items:center;gap:1rem}
-    .logo{font-weight:800;color:var(--accent);font-size:1.8rem}
-    .card{background:rgba(255,255,255,0.03);padding:1rem;border-radius:8px;margin-top:1rem}
-    input, button{padding:0.5rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
-    .result{margin-top:0.75rem;font-weight:700}
-    pre{background:#071227;padding:0.75rem;border-radius:6px;overflow:auto}
-  </style>
+    <title>Golden-Axe Theory</title>
 </head>
 <body>
-  <main class="container">
-    <header>
-      <div class="logo">[NiX]</div>
-      <div>
-        <h1>Golden‑Axe Theory</h1>
-        <div style="color:var(--muted)">By Nickel David Grenier — Universal turbulence framework</div>
-      </div>
-    </header>
-
-    <section class="card">
-      <h2>Calculateur Π_N (démonstration)</h2>
-      <p>Entrez une série de valeurs séparées par des virgules (ex. 1.2,1.5,1.3)</p>
-      <div>
-        <input id="data" placeholder="Ex : 1.2,1.5,1.3,1.8" style="width:70%" />
-        <button id="go">Calculer</button>
-      </div>
-      <div id="result" class="result"></div>
-      <details style="margin-top:0.75rem;color:var(--muted)">
-        <summary>Formule utilisée</summary>
-        <p>Π_N = 0.8 * (std / mean) ** alpha  avec alpha = 0.75 (par défaut)</p>
-      </details>
-    </section>
-
-    <section class="card">
-      <h2>Usage local</h2>
-      <pre>
-python tools/pi_n_calculator.py --data 1.2 1.5 1.3 1.8 2.1
-      </pre>
-    </section>
-
-    <footer style="margin-top:1rem;color:var(--muted)">
-      <small>Repository maintained by Nickel David Grenier (GitHub: @NickelRamQc94)</small>
-    </footer>
-  </main>
-
-<script>
-document.getElementById('go').addEventListener('click', () => {
-  const raw = document.getElementById('data').value.trim();
-  if(!raw){ document.getElementById('result').textContent = 'Aucune donnée fournie.'; return; }
-  const data = raw.split(',').map(s => parseFloat(s.trim())).filter(n => !Number.isNaN(n));
-  if(data.length === 0){ document.getElementById('result').textContent = 'Données invalides.'; return; }
-  const mean = data.reduce((a,b)=>a+b,0)/data.length;
-  const std = Math.sqrt(data.reduce((s,n)=>s+Math.pow(n-mean,2),0)/data.length);
-  const alpha = 0.75;
-  const piN = 0.8 * Math.pow(std/Math.max(mean, Number.EPSILON), alpha);
-  document.getElementById('result').innerHTML = `<div>Π_N = <strong>${piN.toFixed(6)}</strong></div>
-    <div style="color:var(--muted)">mean=${mean.toFixed(6)} std=${std.toFixed(6)} points=${data.length}</div>`;
-});
-</script>
+    <h1>Welcome to the Golden-Axe Theory Interactive Website</h1>
+    <p>Use the calculator to compute Π_N.</p>
 </body>
 </html>
