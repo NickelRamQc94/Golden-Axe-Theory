@@ -1,78 +1,62 @@
-# Golden-Axe-Theory
-"Golden-Axe Theory - Universal turbulence framework by Nickel David Grenier
-```markdown
-# 🌀 Golden-Axe Theory
+# Golden-Axe Theory
 
-**Creator:** David Grenier (NICKEL)  
-**Theory:** Universal turbulence framework  
-**Symbol:** [NiX]  
-**Logic:** LogiqueGNiPura  
+Golden-Axe Theory (par Nickel David Grenier) explore une approche dimensionless pour évaluer l'instabilité et la turbulence des systèmes. Ce dépôt contient une page GitHub Pages, un utilitaire Python pour calculer Π_N, des tests et une licence MIT.
 
-## 🎯 Core Concepts
+## Contenu du dépôt
+- `index.html` : page GitHub Pages présentant le projet et un calculateur rapide.
+- `tools/pi_n_calculator.py` : calculateur Python paramétrable pour Π_N.
+- `LICENSE` : licence MIT.
+- `.gitignore`, `requirements.txt`, tests et workflow CI.
 
-### Π_N - The Universal Instability Constant
-Dimensionless number that predicts system turbulence thresholds.
+## Définition (implémentation par défaut)
+La fonction implémentée pour Π_N est :
 
-### MENeS - Material/Entity Signature System
-DNA-like signature for identifying systems through their turbulence patterns.
+Π_N = 0.8 * (std / mean) ** alpha
 
-### 7 Nickel Constants
-Universal dimensionless numbers for turbulence analysis across all domains.
+avec `alpha = 0.75` par défaut. Le calculateur renvoie un dictionnaire contenant Π_N, status, mean, std et data_points.
 
-## 🚀 Quick Start
+## Installation
+
+1. Créez et activez un environnement virtuel (optionnel) :
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux / macOS
+.venv\Scripts\activate     # Windows (PowerShell)
+```
+
+2. Installez les dépendances :
+
+```bash
+pip install -r requirements.txt
+```
+
+## Utilisation
+
+Exemple CLI :
+
+```bash
+python tools/pi_n_calculator.py --data 1.2 1.5 1.3 1.8 2.1
+```
+
+Exemple d'utilisation depuis Python :
 
 ```python
-# Install the Nickel Calculator
-pip install nickel-calculator
+from tools.pi_n_calculator import PiNCalculator
 
-# Calculate Π_N for your system
-from nickel import TurbulenceAnalyzer
-
-analyzer = TurbulenceAnalyzer()
-pi_n = analyzer.calculate_Pi_N(data)
-print(f"Π_N = {pi_n:.3f}")
+calc = PiNCalculator(alpha=0.75)
+res = calc.calculate([1.2,1.5,1.3,1.8,2.1])
+print(res)
 ```
 
-📁 Repository Structure
+## Tests
 
-```
-golden-axe-theory/
-├── papers/          # Research papers & PDFs
-├── notebooks/       # Jupyter notebooks with examples
-├── tools/          # Python tools and calculators
-├── constants.db    # Database of Nickel constants
-└── docs/           # Documentation
+Exécuter les tests :
+
+```bash
+pytest -q
 ```
 
-🔬 Current Research
+## Auteur
 
-1. Π_N threshold validation across 50+ systems
-2. MENeS database for material identification
-3. Real-time turbulence prediction algorithms
-4. Cross-domain applications (aerospace, medicine, finance)
-
-🤝 Contributing
-
-This is open research. We welcome:
-
-· Validation experiments
-· New constant measurements
-· Application case studies
-· Documentation improvements
-
-📫 Contact
-
-David Grenier (NICKEL)
-📧 david@nickel-theory.com
-🌐 nickel-theory.com
-🐦 @NickelTheory
-
-📄 License
-
-MIT License - See LICENSE for details.
-
----
-
-"Measuring the immeasurable, predicting the unpredictable." - [NiX]
-
-```
+Nickel David Grenier (GitHub: @NickelRamQc94)
