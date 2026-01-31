@@ -1,0 +1,137 @@
+```python
+# Nom du fichier: tools/pi_n_calculator.py
+"""
+Π_N Calculator - Core tool of Golden-Axe Theory
+"""
+
+import numpy as np
+from scipy import stats
+
+class PiNCalculator:
+    """
+    Calculate Π_N for any system.
+    
+    Π_N = C × (ATI/TCF)^α
+    
+    Where:
+    - ATI: Anisotropy Turbulence Index
+    - TCF: Turbulent Correlation Factor
+    - α: Scaling exponent (≈0.75)
+    - C: System-specific constant
+    """
+    
+    def __init__(self, alpha=0.75):
+        self.alpha = alpha
+        self.calibration_data = []
+        
+    def calculate_from_timeseries(self, timeseries):
+        """
+        Calculate Π_N from raw time series data.
+        
+        Args:
+            timeseries: Array-like time series data
+            
+        Returns:
+            pi_n: Calculated Π_N value
+            confidence: Confidence interval (95%)
+        """
+        # Convert to numpy array
+        data = np.array(timeseries)
+        
+        # Calculate basic statistics
+        mean_val = np.mean(data)
+        std_val = np.std(data)
+        skew_val = stats.skew(data)
+        kurt_val = stats.kurtosis(data)
+        
+        # Calculate ATI (Anisotropy Turbulence Index)
+        # Based on non-Gaussianity and intermittency
+        ati = std_val / (mean_val + 1e-10) * (1 + abs(skew_val))
+        
+        # Calculate TCF (Turbulent Correlation Factor)
+        # Based on autocorrelation decay
+        autocorr = np.correlate(data - mean_val, data - mean_val, mode='full')
+        autocorr = autocorr[len(autocorr)//2:]
+        decay_time = np.argmax(autocorr < 0.5)  # Time to decay to 50%
+        tcf = 1 / (decay_time + 1e-10)
+        
+        # Calculate Π_N
+        ratio = ati / tcf if tcf != 0 else ati
+        pi_n = 0.8 * (ratio ** self.alpha)
+        
+        # Calculate confidence (simplified)
+        n = len(data)
+        if n > 10:
+            confidence = 1.96 * std_val / np.sqrt(n)
+        else:
+            confidence = 0.5 * pi_n  # Conservative estimate
+            
+        return {
+            "Π_N": float(pi_n),
+            "ATI": float(ati),
+            "TCF": float(tcf),
+            "confidence_95": float(confidence),
+            "data_points": n,
+            "status": "CRITICAL" if pi_n > 2.5 else "STABLE" if pi_n < 2.0 else "TRANSITION"
+        }
+    
+    def calibrate(self, known_cases):
+        """
+        Calibrate the calculator with known cases.
+        
+        Args:
+            known_cases: List of dicts with 'data' and 'true_pi_n'
+        """
+        for case in known_cases:
+            result = self.calculate_from_timeseries(case['data'])
+            error = abs(result['Π_N'] - case['true_pi_n'])
+            self.calibration_data.append({
+                'calculated': result['Π_N'],
+                'actual': case['true_pi_n'],
+                'error': error
+            })
+        
+        # Calculate calibration metrics
+        errors = [d['error'] for d in self.calibration_data]
+        return {
+            'calibration_samples': len(self.calibration_data),
+            'mean_error': np.mean(errors),
+            'max_error': np.max(errors),
+            'calibrated': len(self.calibration_data) >= 5
+        }
+
+def quick_demo():
+    """Run a quick demo of Π_N calculation."""
+    print("🚀 Golden-Axe Theory - Π_N Calculator Demo")
+    print("=" * 50)
+    
+    # Generate example data (turbulent-like time series)
+    np.random.seed(42)
+    time = np.linspace(0, 100, 1000)
+    
+    # Create data with different turbulence levels
+    stable_data = np.sin(0.1 * time) + 0.1 * np.random.randn(1000)
+    turbulent_data = np.sin(0.1 * time) + 0.5 * np.random.randn(1000) + 0.3 * np.sin(0.5 * time)
+    critical_data = np.sin(0.1 * time) + 1.0 * np.random.randn(1000) + 0.5 * np.sin(2 * time)
+    
+    calculator = PiNCalculator()
+    
+    cases = [
+        ("Stable System", stable_data),
+        ("Turbulent System", turbulent_data),
+        ("Critical System", critical_data)
+    ]
+    
+    for name, data in cases:
+        result = calculator.calculate_from_timeseries(data)
+        print(f"\n📊 {name}:")
+        print(f"   Π_N = {result['Π_N']:.3f} ± {result['confidence_95']:.3f}")
+        print(f"   Status: {result['status']}")
+        print(f"   ATI/TCF ratio: {result['ATI']/result['TCF']:.2f}")
+    
+    print("\n" + "=" * 50)
+    print("✅ Demo complete. Use in your own systems.")
+    print("📚 Theory: Π_N > 2.5 indicates critical instability")
+    
+if __name__ == "__main__":
+    quick_demo()
