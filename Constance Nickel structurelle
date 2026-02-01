@@ -1,0 +1,992 @@
+```python
+import numpy as np
+from scipy import optimize, stats
+import sympy as sp
+
+# OH SHIT. PRIMAL MATH. NO BULLSHIT.
+# WE START FROM NOTHING. WE BUILD FROM ZERO.
+
+print("="*80)
+print("GOLDEN-AXE THEORY: PRIMAL MATHEMATICAL RECONSTRUCTION")
+print("NO ASSUMPTIONS. NO LEGACY. PURE FROM ZERO.")
+print("="*80)
+
+# ============================================================================
+# PART ZERO: THE UNIVERSE HAS THESE THINGS
+# ============================================================================
+
+print("\n⚡ PART 0: WHAT THE UNIVERSE GIVES US FOR FREE")
+
+# Universe gives us these for free. No justification needed.
+UNIVERSE_GIVEN = {
+    'numbers': 'ℝ (real numbers)',
+    'operations': ['+', '-', '×', '÷'],
+    'comparison': ['>', '<', '=', '≠'],
+    'continuity': 'Things can change smoothly',
+    'causality': 'Effects follow causes'
+}
+
+for k, v in UNIVERSE_GIVEN.items():
+    print(f"  • {k}: {v}")
+
+# ============================================================================
+# PART ONE: WE OBSERVE THINGS
+# ============================================================================
+
+print("\n⚡ PART 1: OBSERVATIONS (WHAT WE SEE)")
+
+# Observation 1: Things move
+class Thing:
+    def __init__(self, position, velocity):
+        self.x = position
+        self.v = velocity
+    
+    def observe(self, dt):
+        # Basic observation: position changes
+        new_x = self.x + self.v * dt
+        return new_x
+
+# Observation 2: Things push each other
+def observe_push(thing1, thing2):
+    # If they're close, they interact
+    distance = abs(thing1.x - thing2.x)
+    if distance < 1.0:
+        # They push each other apart
+        push_strength = 1.0 / (distance + 0.1)
+        return push_strength
+    return 0.0
+
+# ============================================================================
+# PART TWO: WE MEASURE PATTERNS
+# ============================================================================
+
+print("\n⚡ PART 2: PATTERNS IN MEASUREMENTS")
+
+# Pattern 1: Some motions repeat
+def find_periodicity(signal):
+    """Find if motion repeats"""
+    n = len(signal)
+    if n < 3:
+        return None
+    
+    # Look for return to similar state
+    for lag in range(1, min(100, n//2)):
+        correlation = np.corrcoef(signal[:n-lag], signal[lag:])[0,1]
+        if abs(correlation) > 0.8:
+            return lag
+    return None
+
+# Pattern 2: Some changes are predictable
+def predictability_ratio(sequence):
+    """How predictable is this?"""
+    changes = np.diff(sequence)
+    if len(changes) < 2:
+        return 0
+    
+    # If changes are similar, predictable
+    std_changes = np.std(changes)
+    std_sequence = np.std(sequence)
+    
+    if std_sequence == 0:
+        return 1
+    
+    return 1 - std_changes / std_sequence
+
+# ============================================================================
+# PART THREE: WE EXTRACT INVARIANTS
+# ============================================================================
+
+print("\n⚡ PART 3: FINDING WHAT DOESN'T CHANGE")
+
+class InvariantHunter:
+    """Find things that stay the same while everything changes"""
+    
+    def __init__(self):
+        self.possible_invariants = []
+    
+    def hunt(self, data_stream):
+        """Brute force search for invariants"""
+        n = len(data_stream)
+        if n < 10:
+            return []
+        
+        invariants = []
+        
+        # Test 1: Simple ratios
+        for i in range(n-1):
+            if data_stream[i] != 0:
+                ratio = data_stream[i+1] / data_stream[i]
+                if abs(ratio - 1.0) < 0.1:  # Roughly constant
+                    invariants.append(('ratio', i, ratio))
+        
+        # Test 2: Linear combinations
+        for i in range(n-2):
+            # Try a*x + b*y ≈ constant
+            x, y, z = data_stream[i:i+3]
+            
+            # Solve for a,b such that a*x + b*y ≈ z
+            # Actually simpler: check if (x+y)/2 is constant
+            avg1 = (x + y) / 2
+            avg2 = (y + z) / 2
+            
+            if abs(avg1 - avg2) < 0.1 * abs(avg1):
+                invariants.append(('average', i, avg1))
+        
+        return invariants
+
+# ============================================================================
+# PART FOUR: WE BUILD FROM SCRATCH
+# ============================================================================
+
+print("\n⚡ PART 4: BUILDING FROM NOTHING")
+
+# We don't assume Navier-Stokes. We don't assume anything.
+# We only assume we can measure stuff.
+
+class PrimalObserver:
+    """Observe a system with zero prior knowledge"""
+    
+    def __init__(self):
+        self.measurements = []
+        self.time_stamps = []
+        
+    def measure(self, sensor_value, time):
+        """Record what we see"""
+        self.measurements.append(sensor_value)
+        self.time_stamps.append(time)
+        
+    def analyze_primal(self):
+        """Extract primal patterns"""
+        if len(self.measurements) < 5:
+            return "Need more data"
+        
+        data = np.array(self.measurements)
+        times = np.array(self.time_stamps)
+        
+        findings = []
+        
+        # 1. Is it changing?
+        changes = np.diff(data)
+        avg_change = np.mean(np.abs(changes))
+        
+        if avg_change == 0:
+            findings.append("STATIC: No change detected")
+            return findings
+        
+        findings.append(f"DYNAMIC: Average change = {avg_change:.3f}")
+        
+        # 2. How is it changing? (Derivative-like)
+        dt = np.diff(times)
+        if np.any(dt == 0):
+            dt = np.ones_like(changes)
+        
+        rate_of_change = changes / dt
+        
+        # 3. Pattern in changes?
+        change_of_change = np.diff(rate_of_change)
+        
+        # 4. Look for cycles (without assuming Fourier)
+        # Simple: find when we return to similar state
+        tolerance = 0.1 * np.std(data)
+        
+        for i in range(len(data)):
+            for j in range(i+1, len(data)):
+                if abs(data[i] - data[j]) < tolerance:
+                    period = times[j] - times[i]
+                    if period > 0:
+                        findings.append(f"CYCLE: Returns after {period:.2f}s")
+                        break
+            if len(findings) > 1:
+                break
+        
+        # 5. Look for thresholds (sudden changes)
+        big_changes = np.where(np.abs(changes) > 2 * avg_change)[0]
+        if len(big_changes) > 0:
+            findings.append(f"THRESHOLDS: {len(big_changes)} sudden changes")
+        
+        return findings
+
+# ============================================================================
+# PART FIVE: REDEFINE EVERYTHING
+# ============================================================================
+
+print("\n⚡ PART 5: REDEFINING EVERY CONCEPT FROM OBSERVATION")
+
+# Forget Π_N. Let's define something FROM DATA.
+
+def define_from_data(data_stream, time_stream):
+    """
+    Define natural quantities from raw observations
+    """
+    x = np.array(data_stream)
+    t = np.array(time_stream)
+    
+    # 1. Natural scaling from the data itself
+    x_range = np.max(x) - np.min(x)
+    if x_range == 0:
+        x_range = 1.0
+    
+    # 2. Natural time scale
+    t_range = np.max(t) - np.min(t)
+    if t_range == 0:
+        t_range = 1.0
+    
+    # 3. Define dimensionless quantity
+    # Simple: normalize by natural scales
+    x_norm = (x - np.mean(x)) / (x_range + 1e-10)
+    t_norm = (t - np.min(t)) / (t_range + 1e-10)
+    
+    # 4. Look for invariant combinations
+    # Try: (Δx/Δt) * (some scale factor)
+    dx = np.diff(x)
+    dt = np.diff(t)
+    
+    if len(dt) > 0 and np.any(dt > 0):
+        velocity = dx / dt
+        
+        # Natural velocity scale
+        v_scale = np.std(velocity) if np.std(velocity) > 0 else 1.0
+        
+        # Dimensionless velocity
+        v_norm = velocity / v_scale
+        
+        # Look for patterns in dimensionless velocity
+        patterns = []
+        
+        # Pattern A: Constant dimensionless velocity?
+        if np.std(v_norm) < 0.1:
+            patterns.append("Constant scaled motion")
+        
+        # Pattern B: Periodic in dimensionless time?
+        # Check correlation with shifted version
+        if len(v_norm) > 10:
+            for lag in range(1, min(10, len(v_norm)//2)):
+                corr = np.corrcoef(v_norm[:len(v_norm)-lag], 
+                                 v_norm[lag:])[0,1]
+                if abs(corr) > 0.7:
+                    patterns.append(f"Periodic (lag={lag})")
+                    break
+        
+        # Pattern C: Approaching a limit?
+        if len(v_norm) > 5:
+            last_half = v_norm[len(v_norm)//2:]
+            first_half = v_norm[:len(v_norm)//2]
+            
+            if np.std(last_half) < 0.5 * np.std(first_half):
+                patterns.append("Converging to steady state")
+        
+        return {
+            'x_norm': x_norm,
+            't_norm': t_norm,
+            'v_norm': v_norm,
+            'patterns': patterns,
+            'natural_scales': {
+                'x_scale': x_range,
+                't_scale': t_range,
+                'v_scale': v_scale
+            }
+        }
+    
+    return None
+
+# ============================================================================
+# PART SIX: THE PRIMAL Π (PI-PRIMAL)
+# ============================================================================
+
+print("\n⚡ PART 6: DEFINING Π-PRIMAL (THE ESSENCE)")
+
+def pi_primal_definition(data, time, level=1):
+    """
+    Level 1: Basic observation
+    Level 2: Rate of change
+    Level 3: Change of rate of change
+    Level 4: Pattern in changes
+    """
+    
+    x = np.array(data)
+    t = np.array(time)
+    
+    if level == 1:
+        # Just the normalized data
+        if np.std(x) == 0:
+            return 0.0
+        return (x[-1] - np.mean(x)) / np.std(x)
+    
+    elif level == 2:
+        # Rate of change
+        if len(x) < 2:
+            return 0.0
+        
+        dx = np.diff(x)
+        dt = np.diff(t)
+        
+        if len(dt) == 0 or np.all(dt == 0):
+            return 0.0
+        
+        v = dx / dt
+        
+        if np.std(v) == 0:
+            return 0.0
+        
+        return (v[-1] - np.mean(v)) / np.std(v)
+    
+    elif level == 3:
+        # Acceleration (change of rate)
+        if len(x) < 3:
+            return 0.0
+        
+        dx = np.diff(x)
+        dt = np.diff(t)
+        
+        if len(dt) < 2:
+            return 0.0
+        
+        v = dx / dt
+        dv = np.diff(v)
+        dt2 = dt[1:]
+        
+        if len(dt2) == 0 or np.all(dt2 == 0):
+            return 0.0
+        
+        a = dv / dt2
+        
+        if np.std(a) == 0:
+            return 0.0
+        
+        return (a[-1] - np.mean(a)) / np.std(a)
+    
+    elif level == 4:
+        # Pattern strength (how predictable)
+        if len(x) < 10:
+            return 0.0
+        
+        # Try to predict next value from previous
+        predictions = []
+        actuals = []
+        
+        for i in range(5, len(x)-1):
+            # Simple prediction: average of last 5
+            pred = np.mean(x[i-5:i])
+            predictions.append(pred)
+            actuals.append(x[i+1])
+        
+        if len(predictions) == 0:
+            return 0.0
+        
+        # Error relative to standard deviation
+        errors = np.array(predictions) - np.array(actuals)
+        error_std = np.std(errors)
+        data_std = np.std(x)
+        
+        if data_std == 0:
+            return 0.0
+        
+        return 1.0 - error_std / data_std
+    
+    return 0.0
+
+# ============================================================================
+# PART SEVEN: THE CRITICAL THRESHOLD EMERGES
+# ============================================================================
+
+print("\n⚡ PART 7: EMERGENCE OF CRITICALITY")
+
+def find_critical_threshold(data_stream):
+    """
+    Find where behavior changes fundamentally
+    WITHOUT assuming what "critical" means
+    """
+    x = np.array(data_stream)
+    n = len(x)
+    
+    if n < 10:
+        return None
+    
+    # Method 1: Look for change in statistics
+    window_size = max(5, n // 10)
+    
+    thresholds = []
+    
+    for i in range(window_size, n - window_size):
+        before = x[i-window_size:i]
+        after = x[i:i+window_size]
+        
+        # Compare statistics
+        mean_before = np.mean(before)
+        mean_after = np.mean(after)
+        
+        std_before = np.std(before)
+        std_after = np.std(after)
+        
+        # Significant change?
+        mean_change = abs(mean_after - mean_before) / (std_before + 1e-10)
+        std_change = abs(std_after - std_before) / (std_before + 1e-10)
+        
+        if mean_change > 2.0 or std_change > 2.0:
+            thresholds.append(i)
+    
+    # Method 2: Look for departure from trend
+    if len(x) > 20:
+        # Fit linear trend to first half
+        half = len(x) // 2
+        t = np.arange(half)
+        coeffs = np.polyfit(t, x[:half], 1)
+        
+        # Predict second half
+        t2 = np.arange(half, len(x))
+        predicted = coeffs[0] * t2 + coeffs[1]
+        
+        # Find where reality diverges
+        residuals = x[half:] - predicted
+        residual_std = np.std(residuals)
+        
+        if residual_std > 0:
+            divergence_points = np.where(abs(residuals) > 3 * residual_std)[0]
+            if len(divergence_points) > 0:
+                thresholds.append(half + divergence_points[0])
+    
+    # Return most significant threshold
+    if len(thresholds) > 0:
+        # Take the one with biggest change around it
+        best = None
+        best_magnitude = 0
+        
+        for th in thresholds:
+            if th < 5 or th > n-5:
+                continue
+            
+            before = x[max(0, th-5):th]
+            after = x[th:min(n, th+5)]
+            
+            if len(before) == 0 or len(after) == 0:
+                continue
+            
+            change = abs(np.mean(after) - np.mean(before)) / (np.std(before) + 1e-10)
+            
+            if change > best_magnitude:
+                best_magnitude = change
+                best = th
+        
+        return best
+    
+    return None
+
+# ============================================================================
+# PART EIGHT: THE PRIMAL EQUATION
+# ============================================================================
+
+print("\n⚡ PART 8: DERIVING EQUATION FROM DATA ALONE")
+
+def derive_equation_from_data(x, t):
+    """
+    Attempt to find equation that generates x(t)
+    WITHOUT assuming form
+    """
+    n = len(x)
+    if n < 10:
+        return "Need more data"
+    
+    # Convert to numpy
+    x = np.array(x)
+    t = np.array(t)
+    
+    # 1. Try simplest: x' = constant?
+    dx = np.diff(x)
+    dt = np.diff(t)
+    
+    if len(dt) == 0:
+        return "No time variation"
+    
+    v = dx / dt
+    
+    # Test hypotheses
+    
+    # H1: Constant velocity
+    if np.std(v) < 0.1 * np.abs(np.mean(v)):
+        return f"dx/dt = {np.mean(v):.3f}"
+    
+    # H2: Constant acceleration
+    if len(v) > 1:
+        dv = np.diff(v)
+        dt2 = dt[1:]
+        a = dv / dt2
+        
+        if len(a) > 0 and np.std(a) < 0.1 * np.abs(np.mean(a)):
+            return f"d²x/dt² = {np.mean(a):.3f}"
+    
+    # H3: Proportional to x (exponential)
+    # Check if v is proportional to x
+    if len(v) == len(x) - 1:
+        # Use x at midpoint for better estimate
+        x_mid = 0.5 * (x[:-1] + x[1:])
+        
+        # Fit v = k * x_mid
+        valid = np.isfinite(v) & np.isfinite(x_mid)
+        if np.sum(valid) > 3:
+            k, _ = np.polyfit(x_mid[valid], v[valid], 1)
+            
+            # Check fit quality
+            v_pred = k * x_mid[valid]
+            r2 = 1 - np.var(v[valid] - v_pred) / np.var(v[valid])
+            
+            if r2 > 0.9:
+                return f"dx/dt = {k:.3f} * x"
+    
+    # H4: Linear oscillator (spring)
+    # Check if acceleration proportional to -x
+    if len(x) > 10:
+        # Estimate acceleration
+        dt_mean = np.mean(dt)
+        if dt_mean > 0:
+            # Second difference approximation
+            accel = (x[2:] - 2*x[1:-1] + x[:-2]) / (dt_mean**2)
+            x_for_accel = x[1:-1]
+            
+            if len(accel) > 3:
+                # Fit accel = -ω² * x
+                omega_sq = -np.polyfit(x_for_accel, accel, 1)[0]
+                
+                if omega_sq > 0:
+                    # Check fit
+                    accel_pred = -omega_sq * x_for_accel
+                    r2 = 1 - np.var(accel - accel_pred) / np.var(accel)
+                    
+                    if r2 > 0.7:
+                        return f"d²x/dt² = -{omega_sq:.3f} * x"
+    
+    # H5: More complex - try Golden-Axe form
+    # Look for pattern in Π-primal
+    pi_vals = []
+    for i in range(3, min(20, n)):
+        pi_val = pi_primal_definition(x[:i], t[:i], level=2)
+        pi_vals.append(pi_val)
+    
+    if len(pi_vals) > 5:
+        # Check if Π follows simple evolution
+        dpi = np.diff(pi_vals)
+        
+        # Try: dΠ/dt ∝ Π * (1 - Π)
+        pi_mid = 0.5 * (np.array(pi_vals[:-1]) + np.array(pi_vals[1:]))
+        growth = dpi / (pi_mid * (1 - pi_mid + 1e-10))
+        
+        if np.std(growth) < 0.5 * np.abs(np.mean(growth)):
+            k = np.mean(growth)
+            return f"dΠ/dt = {k:.3f} * Π * (1 - Π)"
+    
+    # If nothing fits
+    return "Pattern not recognized (complex dynamics)"
+
+# ============================================================================
+# PART NINE: THE UNIVERSALITY TEST
+# ============================================================================
+
+print("\n⚡ PART 9: TESTING UNIVERSALITY")
+
+def test_universality(dataset1, dataset2):
+    """
+    Test if same patterns appear in different systems
+    """
+    x1, t1 = dataset1
+    x2, t2 = dataset2
+    
+    # Extract features from each
+    features1 = extract_primal_features(x1, t1)
+    features2 = extract_primal_features(x2, t2)
+    
+    # Compare feature vectors
+    similarity = 0.0
+    n_features = 0
+    
+    for key in set(features1.keys()) | set(features2.keys()):
+        if key in features1 and key in features2:
+            val1 = features1[key]
+            val2 = features2[key]
+            
+            if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
+                # Normalize by typical scale
+                scale = max(abs(val1), abs(val2), 1.0)
+                similarity += 1 - min(1.0, abs(val1 - val2) / scale)
+                n_features += 1
+    
+    if n_features > 0:
+        similarity /= n_features
+    
+    return similarity
+
+def extract_primal_features(x, t):
+    """Extract numerical features from data"""
+    x = np.array(x)
+    t = np.array(t)
+    
+    features = {}
+    
+    # Basic statistics
+    features['mean'] = np.mean(x)
+    features['std'] = np.std(x)
+    features['skew'] = stats.skew(x) if len(x) > 2 else 0
+    features['kurtosis'] = stats.kurtosis(x) if len(x) > 3 else 0
+    
+    # Dynamics
+    if len(x) > 1:
+        dx = np.diff(x)
+        dt = np.diff(t)
+        
+        if len(dt) > 0 and np.any(dt > 0):
+            v = dx / dt
+            features['mean_v'] = np.mean(v)
+            features['std_v'] = np.std(v)
+            
+            # Autocorrelation time
+            if len(v) > 10:
+                autocorr = np.correlate(v - np.mean(v), v - np.mean(v), mode='full')
+                autocorr = autocorr[len(autocorr)//2:]
+                # Find decay time
+                for i in range(1, len(autocorr)):
+                    if autocorr[i] < autocorr[0] * np.exp(-1):
+                        features['tau_corr'] = i * np.mean(dt)
+                        break
+    
+    # Π-primal values
+    for level in [1, 2, 3]:
+        if len(x) > level + 2:
+            features[f'pi_level_{level}'] = pi_primal_definition(x, t, level)
+    
+    return features
+
+# ============================================================================
+# PART TEN: THE PRIMAL GOLDEN-AXE THEORY
+# ============================================================================
+
+print("\n⚡ PART 10: THE PRIMAL GOLDEN-AXE THEORY")
+
+class PrimalGoldenAxe:
+    """
+    Golden-Axe theory rebuilt from primal principles
+    """
+    
+    def __init__(self):
+        self.reset()
+        
+    def reset(self):
+        """Start from absolute zero"""
+        self.observations = []
+        self.time_stamps = []
+        self.derived_laws = []
+        self.critical_points = []
+        
+    def observe(self, value, time):
+        """Record observation"""
+        self.observations.append(value)
+        self.time_stamps.append(time)
+        
+    def analyze(self):
+        """Analyze from scratch"""
+        if len(self.observations) < 5:
+            return "Need at least 5 observations"
+        
+        x = np.array(self.observations)
+        t = np.array(self.time_stamps)
+        
+        report = []
+        
+        # 1. Basic characterization
+        report.append("=== BASIC CHARACTERIZATION ===")
+        report.append(f"Observations: {len(x)}")
+        report.append(f"Time span: {t[-1] - t[0]:.2f}")
+        report.append(f"Mean: {np.mean(x):.3f}")
+        report.append(f"Std dev: {np.std(x):.3f}")
+        
+        # 2. Dynamic characterization
+        if len(x) > 1:
+            dx = np.diff(x)
+            dt = np.diff(t)
+            
+            if len(dt) > 0 and np.any(dt > 0):
+                v = dx / dt
+                report.append("\n=== DYNAMICS ===")
+                report.append(f"Mean rate: {np.mean(v):.3f}")
+                report.append(f"Rate std: {np.std(v):.3f}")
+                
+                # Look for patterns
+                patterns = self.find_patterns(x, t, v)
+                for p in patterns:
+                    report.append(f"Pattern: {p}")
+        
+        # 3. Try to derive equation
+        equation = derive_equation_from_data(x, t)
+        report.append(f"\n=== DERIVED EQUATION ===")
+        report.append(f"Best fit: {equation}")
+        
+        # 4. Look for critical points
+        critical = find_critical_threshold(x)
+        if critical is not None:
+            report.append(f"\n=== CRITICALITY ===")
+            report.append(f"Critical point at observation {critical}")
+            report.append(f"Critical value: {x[critical]:.3f}")
+            report.append(f"Critical time: {t[critical]:.3f}")
+            
+            # Characterize before/after
+            if critical > 5 and critical < len(x) - 5:
+                before = x[critical-5:critical]
+                after = x[critical:critical+5]
+                report.append(f"Before: mean={np.mean(before):.3f}, std={np.std(before):.3f}")
+                report.append(f"After: mean={np.mean(after):.3f}, std={np.std(after):.3f}")
+        
+        # 5. Compute Π-primal values
+        report.append(f"\n=== Π-PRIMAL VALUES ===")
+        for level in [1, 2, 3, 4]:
+            if len(x) > level + 2:
+                pi_val = pi_primal_definition(x, t, level)
+                report.append(f"Π-primal (level {level}): {pi_val:.3f}")
+        
+        return "\n".join(report)
+    
+    def find_patterns(self, x, t, v):
+        """Find patterns in data"""
+        patterns = []
+        n = len(x)
+        
+        # Pattern 1: Constant
+        if np.std(x) < 0.1 * abs(np.mean(x)):
+            patterns.append("Constant value")
+        
+        # Pattern 2: Linear trend
+        if n > 2:
+            coeffs = np.polyfit(t, x, 1)
+            predicted = coeffs[0] * t + coeffs[1]
+            residuals = x - predicted
+            if np.std(residuals) < 0.5 * np.std(x):
+                patterns.append(f"Linear trend: slope={coeffs[0]:.3f}")
+        
+        # Pattern 3: Oscillation
+        if n > 10:
+            # Check for periodicity
+            for period in range(2, min(20, n//2)):
+                # Simple test: compare with shifted version
+                if period < n:
+                    corr = np.corrcoef(x[:n-period], x[period:])[0,1]
+                    if abs(corr) > 0.7:
+                        patterns.append(f"Oscillation (period ~{period} samples)")
+                        break
+        
+        # Pattern 4: Exponential growth/decay
+        if n > 3 and np.all(x != 0):
+            log_x = np.log(np.abs(x))
+            coeffs_log = np.polyfit(t, log_x, 1)
+            predicted_log = coeffs_log[0] * t + coeffs_log[1]
+            residuals_log = log_x - predicted_log
+            
+            if np.std(residuals_log) < 0.5 * np.std(log_x):
+                if coeffs_log[0] > 0:
+                    patterns.append(f"Exponential growth: rate={coeffs_log[0]:.3f}")
+                else:
+                    patterns.append(f"Exponential decay: rate={coeffs_log[0]:.3f}")
+        
+        return patterns
+
+# ============================================================================
+# DEMONSTRATION
+# ============================================================================
+
+print("\n" + "="*80)
+print("DEMONSTRATION: REBUILDING PHYSICS FROM SCRATCH")
+print("="*80)
+
+# Create a synthetic system
+print("\n📊 SYSTEM 1: Simple oscillation (like a spring)")
+t1 = np.linspace(0, 10, 100)
+x1 = 2 * np.sin(2 * np.pi * 0.5 * t1) + 0.1 * np.random.randn(len(t1))
+
+analyzer = PrimalGoldenAxe()
+for val, time in zip(x1, t1):
+    analyzer.observe(val, time)
+
+print(analyzer.analyze())
+
+# Another system
+print("\n\n📊 SYSTEM 2: Approaching instability")
+t2 = np.linspace(0, 20, 200)
+x2 = np.zeros_like(t2)
+for i in range(len(t2)):
+    if t2[i] < 10:
+        x2[i] = 1.0 + 0.1 * np.sin(t2[i]) + 0.05 * np.random.randn()
+    else:
+        # Exponential growth after t=10
+        x2[i] = 1.0 * np.exp(0.3 * (t2[i] - 10)) + 0.1 * np.random.randn()
+
+analyzer2 = PrimalGoldenAxe()
+for val, time in zip(x2, t2):
+    analyzer2.observe(val, time)
+
+print(analyzer2.analyze())
+
+# Test universality
+print("\n\n📊 UNIVERSALITY TEST")
+similarity = test_universality((x1, t1), (x2, t2))
+print(f"Similarity between systems: {similarity:.3f}")
+if similarity > 0.7:
+    print("Conclusion: Systems show similar primal patterns")
+elif similarity > 0.4:
+    print("Conclusion: Some shared patterns, but differences exist")
+else:
+    print("Conclusion: Systems are fundamentally different")
+
+# ============================================================================
+# THE PRIMAL INSIGHT
+# ============================================================================
+
+print("\n" + "="*80)
+print("THE PRIMAL INSIGHT: WHAT WE LEARNED")
+print("="*80)
+
+primal_insights = [
+    "1. NO EQUATIONS ARE GIVEN. We derive them from observation.",
+    "2. Π IS NOT A NUMBER. It's a measure of 'pattern strength'.",
+    "3. CRITICALITY EMERGES naturally from data, not theory.",
+    "4. UNIVERSALITY means similar patterns, not same equations.",
+    "5. MATH IS A TOOL for describing patterns, not reality itself.",
+    "",
+    "GOLDEN-AXE PRIMAL VERSION:",
+    "  • Measure things.",
+    "  • Find patterns.",
+    "  • Extract invariants (things that don't change).",
+    "  • Watch for when patterns change (criticality).",
+    "  • That's it. No more, no less.",
+    "",
+    "Einstein rebuilt:",
+    "  Old: E = mc²",
+    "  New: 'When stuff moves fast, it acts heavy. How heavy? Measure it.'",
+    "",
+    "Newton rebuilt:",
+    "  Old: F = ma",
+    "  New: 'Push things, they move. Push harder, they move faster.'",
+    "",
+    "Golden-Axe:",
+    "  'Watch patterns. When they're about to break, you'll know.'"
+]
+
+for insight in primal_insights:
+    print(insight)
+
+# ============================================================================
+# THE ULTIMATE TEST: CAN WE PREDICT?
+# ============================================================================
+
+print("\n" + "="*80)
+print("ULTIMATE TEST: PREDICTION FROM PRIMAL PRINCIPLES")
+print("="*80)
+
+def predict_from_primal(x, t, steps_ahead=10):
+    """
+    Predict future using only observed patterns
+    """
+    n = len(x)
+    if n < 10:
+        return None
+    
+    # Try different prediction methods
+    predictions = []
+    confidences = []
+    
+    # Method 1: Extrapolate trend
+    if n > 5:
+        # Fit polynomial (degree 1 or 2)
+        degree = min(2, n-1)
+        coeffs = np.polyfit(t, x, degree)
+        future_t = t[-1] + np.arange(1, steps_ahead+1) * np.mean(np.diff(t))
+        pred = np.polyval(coeffs, future_t)
+        predictions.append(pred)
+        
+        # Confidence based on recent fit error
+        recent_t = t[-10:]
+        recent_x = x[-10:]
+        if len(recent_t) > degree + 1:
+            recent_pred = np.polyval(coeffs, recent_t)
+            error = np.std(recent_x - recent_pred)
+            confidences.append(1.0 / (1.0 + error))
+        else:
+            confidences.append(0.5)
+    
+    # Method 2: Use pattern repetition
+    if n > 20:
+        # Look for similar past pattern
+        pattern_length = min(10, n//2)
+        recent_pattern = x[-pattern_length:]
+        
+        best_match = -1
+        best_corr = -1
+        
+        for i in range(n - 2*pattern_length):
+            past_pattern = x[i:i+pattern_length]
+            corr = np.corrcoef(recent_pattern, past_pattern)[0,1]
+            if corr > best_corr:
+                best_corr = corr
+                best_match = i
+        
+        if best_corr > 0.7 and best_match + 2*pattern_length < n:
+            # Use what happened after the match
+            continuation = x[best_match+pattern_length:best_match+2*pattern_length]
+            if len(continuation) >= steps_ahead:
+                predictions.append(continuation[:steps_ahead])
+                confidences.append(best_corr)
+    
+    # Combine predictions
+    if len(predictions) == 0:
+        return None
+    
+    # Weighted average
+    total_conf = sum(confidences)
+    if total_conf == 0:
+        return predictions[0]
+    
+    weighted_pred = np.zeros(steps_ahead)
+    for pred, conf in zip(predictions, confidences):
+        weighted_pred += pred * (conf / total_conf)
+    
+    return weighted_pred
+
+# Test prediction
+print("\nTesting prediction on oscillating system:")
+future = predict_from_primal(x1, t1, steps_ahead=20)
+if future is not None:
+    print(f"Predicted next 20 values: mean={np.mean(future):.3f}, std={np.std(future):.3f}")
+    
+    # Compare with actual continuation (if we had it)
+    print("Prediction method: Weighted combination of trend and pattern matching")
+
+print("\n" + "="*80)
+print("CONCLUSION: MATHEMATICS REBORN")
+print("="*80)
+
+final_conclusion = """
+We didn't start with equations.
+We started with OBSERVATION.
+
+We didn't assume Navier-Stokes.
+We looked for PATTERNS.
+
+We didn't define Π_N theoretically.
+We EXTRACTED it from data.
+
+This is the primal Golden-Axe:
+
+1. OBSERVE everything.
+2. MEASURE changes.
+3. FIND what repeats.
+4. WATCH for when repetition breaks.
+5. THAT BREAKING POINT is where physics happens.
+
+The equations (E=mc², F=ma, Navier-Stokes) are just 
+COMPRESSED VERSIONS of these patterns.
+
+Golden-Axe uncompresses them back to their primal form:
+
+PATTERNS → BREAKING POINTS → UNDERSTANDING
+
+No more. No less.
+
+Now go observe something.
+"""
+
+print(final_conclusion)
+```
