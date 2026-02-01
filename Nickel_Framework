@@ -1,0 +1,13 @@
+Nickel_Framework/
+├── LaTeX_Documents/
+│   ├── Nickel_Structural_Minimality.tex      # Document principal
+│   ├── Nickel_Technical_Summary.tex          # Version courte
+│   └── Nickel_Definitions.tex               # Définitions seules
+├── Prompts/
+│   ├── NotebookLM_Technical_Analysis.txt    # Prompt rigoureux
+│   ├── NotebookLM_Interdisciplinary.txt     # Prompt brainstorming
+│   └── NotebookLM_Pedagogical.txt          # Prompt explicatif
+└── Protocols/
+    ├── ATI_Measurement_Protocol.txt         # Protocole ATI
+    ├── TCF_Estimation_Protocol.txt          # Protocole TCF
+    └── Falsification_Test.txt               # Test de falsification
