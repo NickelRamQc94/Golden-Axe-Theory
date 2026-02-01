@@ -1,0 +1,109 @@
+**J'attends ton hypothèse.** Donne-moi l'énoncé précis (une phrase, une équation, un "Et si...") et je te construis le test immédiatement.
+
+Pour l'instant, voici comment on testera **n'importe quelle hypothèse H** sur le cadre Nickel :
+
+---
+
+## 🧪 **PROTOCOLE GÉNÉRIQUE DE TEST D'HYPOTHÈSE**
+
+```python
+def test_hypothesis(hypothesis_type: str, data: dict, params: dict = None) -> dict:
+    """
+    Teste une hypothèse sur le comportement des invariants Nickel.
+    
+    Hypothesis types:
+    1. "threshold"    : Π_N > X ⇒ événement critique dans Δt
+    2. "scaling"      : Π_N ∼ (ATI/TCF)^α
+    3. "universality" : Même Π_N critique pour différents écoulements
+    4. "prediction"   : dΠ_N/dt > K prédit blow-up
+    5. "custom"       : Ton hypothèse perso
+    """
+```
+
+---
+
+## 🎯 **EXEMPLES D'HYPOTHÈSES TESTABLES IMMÉDIATEMENT**
+
+### **H1 (Seuil critique)**
+> *"Quand Π_N dépasse 2.5, un événement critique (∆‖ω‖ > seuil) se produit dans les 5 pas de temps suivants."*
+
+**Test :**
+```python
+def test_threshold_hypothesis(Pi_N, omega, threshold=2.5, window=5):
+    alarms = Pi_N > threshold
+    events = np.gradient(omega) > np.std(np.gradient(omega))
+    
+    true_positives = 0
+    for i in range(len(alarms)-window):
+        if alarms[i] and np.any(events[i:i+window]):
+            true_positives += 1
+    
+    return true_positives / np.sum(alarms)  # Précision
+```
+
+### **H2 (Loi d'échelle)**
+> *"Π_N suit une loi de puissance : Π_N = C × (ATI/TCF)^α avec α ≈ 0.75"*
+
+**Test :**
+```python
+def test_scaling_law(ATI, TCF, Pi_N):
+    ratio = ATI / TCF
+    # Ajustement linéaire en log-log
+    coeffs = np.polyfit(np.log(ratio), np.log(Pi_N), 1)
+    alpha = coeffs[0]  # L'exposant
+    C = np.exp(coeffs[1])  # La constante
+    
+    # Qualité de l'ajustement
+    residuals = np.log(Pi_N) - (coeffs[0]*np.log(ratio) + coeffs[1])
+    R_squared = 1 - np.var(residuals) / np.var(np.log(Pi_N))
+    
+    return {"alpha": alpha, "C": C, "R^2": R_squared}
+```
+
+### **H3 (Universalité)**
+> *"La valeur critique de Π_N est la même (à 10% près) pour tous les écoulements turbulents."*
+
+**Test :**
+```python
+def test_universality(Pi_N_critical_list):
+    """
+    Pi_N_critical_list: liste des Π_N au moment des blow-ups
+    pour différentes simulations
+    """
+    mean_critical = np.mean(Pi_N_critical_list)
+    std_critical = np.std(Pi_N_critical_list)
+    cv = std_critical / mean_critical  # Coefficient de variation
+    
+    # Si cv < 0.1, l'hypothèse tient
+    return cv < 0.1, mean_critical, cv
+```
+
+---
+
+## 💡 **TON HYPOTHÈSE À TOI**
+
+**Donne-moi ton "Et si..."** sous une de ces formes :
+
+1. **Relation** : *"Et si MENdS = √(MENeS) × log(TCF) ?"*
+2. **Seuil** : *"Et si θ* > π/4 avec ATI > TCF ⇒ blow-up certain ?"*
+3. **Symétrie** : *"Et si Π_N était invariant sous la transformation x → 1/x ?"*
+4. **Prédiction** : *"Et si d(Π_N)/dt > 0 pendant 3 steps ⇒ singularité dans 10 steps ?"*
+5. **Tout autre chose** qui te passe par la tête.
+
+---
+
+## 📊 **JE SUIS PRÊT À TESTER QUAND TU VEUX**
+
+**Dis-moi juste :**
+```
+HYPOTHÈSE: [Ton énoncé clair ici]
+DONNÉES: [J'ai des séries temporelles / Je veux générer des données de test]
+```
+
+Et je te sors :
+1. Le **code de test spécifique**
+2. Les **résultats numériques**
+3. Une **visualisation** pour interpréter
+4. La **conclusion** (hypothèse rejetée/supportée)
+
+**Alors, quelle hypothèse veux-tu que je teste en premier ?** 🧪
