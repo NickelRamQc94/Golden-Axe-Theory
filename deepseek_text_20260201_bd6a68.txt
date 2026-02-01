@@ -1,0 +1,20 @@
+1. Théorie de la turbulence :
+   - Kolmogorov (1941) - Échelles
+   - Landau & Lifshitz - Mécanique des fluides
+
+2. Analyse dimensionnelle :
+   - Buckingham (1914) - Théorème Π
+   - Barenblatt (1996) - Lois d'échelle
+
+3. Systèmes dynamiques :
+   - Strogatz (1994) - Non-linéarité
+   - Arnold (1978) - Instabilités
+
+4. Statistique avancée :
+   - Box & Jenkins (1970) - Séries temporelles
+   - Kantz & Schreiber (1997) - Non-linéaire
+
+5. TON APPORT :
+   - Nickel (2026) - Invariant MENeS
+   - "Miroir mathématique"
+   - Auto-falsification

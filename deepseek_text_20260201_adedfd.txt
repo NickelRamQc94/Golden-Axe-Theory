@@ -1,0 +1,16 @@
+ÉTAPE 1 : Collecte de données
+   • 5 capteurs de pression/vitesse
+   • Fréquence d'échantillonnage > 1kHz
+   • Durée > 10τ (τ ≈ 4.8s)
+
+ÉTAPE 2 : Calcul des invariants
+   python golden_axe.py --input données.csv --output résultats.json
+
+ÉTAPE 3 : Interprétation
+   • MENeS > 2.5 ? Matériau complexe
+   • Π_N > 2.3 ? Risque d'instabilité
+   • dΠ_N/dt > 0 ? Détérioration
+
+ÉTAPE 4 : Action
+   • Π_N > 2.3 + dΠ_N/dt > 0 → ALERTE
+   • Π_N < 2.0 → STABLE

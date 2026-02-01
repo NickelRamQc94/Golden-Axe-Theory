@@ -1,0 +1,10 @@
+ÉTAT LAMINAIRE (Π_N < 1.5)
+  |
+  | [PERTURBATION EXTERNE]
+  ↓
+ÉTAT TRANSITOIRE (1.5 < Π_N < 2.3)
+  |    |          |
+  |    |          | [CONTROLE ACTIF]
+  ↓    ↓          ↓
+TURBULENCE   ÉTAT CRITIQUE   RETOUR LAMINAIRE
+(Π_N > 2.3)   (Π_N ≈ 2.3)      (Π_N < 1.5)

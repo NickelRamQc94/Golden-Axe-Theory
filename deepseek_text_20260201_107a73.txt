@@ -1,0 +1,5 @@
+"Golden-Axe Theory: MENeS as Universal Material Fingerprint"
+Journal: Physical Review X
+Sections: Mathématiques complètes en annexe
+Code: GitHub (MIT License)
+Données: Zenodo (Open Access)

@@ -1,0 +1,16 @@
+Q : Pourquoi α = 0.75 et pas 2/3 ?
+R : 0.75 émerge des données. C'est un exposant critique,
+    comme en physique statistique (ex : magnétisme).
+
+Q : Comment MENeS est-il invariant ?
+R : MENeS combine des propriétés matérielles (ρ, μ...)
+    qui sont elles-mêmes invariantes sous écoulement.
+
+Q : La théorie est-elle falsifiable ?
+R : OUI. Prédiction : si MENeS(eau) ≠ MENeS(air),
+    alors Π_crit(eau) ≠ Π_crit(air). Testable.
+
+Q : Relation avec Reynolds ?
+R : Re = ρUL/μ (dynamique)
+    Π_N = f(Re, géométrie, MENeS) (instabilité)
+    Golden-Axe complète Reynolds, ne le remplace pas.

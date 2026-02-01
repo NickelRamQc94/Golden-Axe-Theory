@@ -1,0 +1,8 @@
+1. DÉCOUVERTE : MENeS existe
+   → Tous les matériaux ont une signature turbulence
+
+2. THÉORÈME : Π_N suit une loi d'échelle
+   → Π_N = C × (ATI/TCF)^α × (1 + ε·F(MENdS, MENeS))
+
+3. APPLICATION : Prédiction universelle
+   → Mesurer MENeS → Calculer Π_N → Prédire instabilités

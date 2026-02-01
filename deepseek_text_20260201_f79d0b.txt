@@ -1,0 +1,20 @@
+SETUP EXPÉRIMENTAL :
+┌─────────────────────────────────────────┐
+│ CANAL HYDRAULIQUE (L=10m, H=0.5m)       │
+│                                          │
+│ Capteurs :                              │
+│  • 5 capteurs pression (P1-P5)          │
+│  • 2 anémomètres (V1, V2)               │
+│  • 1 vélocimètre laser (LDA)            │
+│                                          │
+│ Fluides testés :                        │
+│  1. Eau (20°C)     → MENeS ≈ 1.8        │
+│  2. Glycérine      → MENeS ≈ 3.2        │
+│  3. Air (vent)     → MENeS ≈ 1.2        │
+└─────────────────────────────────────────┘
+
+RÉSULTATS :
+Fluide    Π_N mesuré   Π_N prédit   Écart
+Eau       2.41         2.38         +1.2%
+Glycérine 2.15         2.18         -1.4%
+Air       2.52         2.55         -1.2%
