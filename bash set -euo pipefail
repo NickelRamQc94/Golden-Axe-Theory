@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MANIFEST="${1:-openedition_manifest.csv}"
+OUTDIR="${2:-./downloads}"
+USER_AGENT="AntigravityBot/1.0 (+mailto:you@example.com)"
+RATE_LIMIT="${3:-1}"   # seconds between requests
+LOGFILE="${OUTDIR}/download_log.txt"
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+
+mkdir -p "$OUTDIR"
+
+# helper: fetch page with UA and simple retry
+fetch_page() {
+  local url="$1"; local out="$2"
+  curl -sSL -A "$USER_AGENT" --retry 3 --retry-delay 2 -o "$out" "$url"
+}
+
+# helper: find first .pdf link in HTML
+find_pdf_in_html() {
+  local htmlfile="$1"
+  # look for href containing .pdf (absolute or relative)
+  grep -Eoi 'href="[^"]+\.pdf[^"]*"' "$htmlfile" | sed -E 's/href="([^"]+)"/\1/' | head -n1
+}
+
+# iterate manifest (skip header)
+tail -n +2 "$MANIFEST" | while IFS=, read -r id title authors year journal volume issue pages doi article_page_url pdf_url license sha256 notes; do
+  id="$(echo "$id" | xargs)"
+  [ -z "$id" ] && continue
+  echo "[$(date -Iseconds)] PROCESS $id : $title" | tee -a "$LOGFILE"
+
+  safeid="$(echo "$id" | tr -c '[:alnum:]_-' '_')"
+  out_pdf="$OUTDIR/${safeid}.pdf"
+  status="pending"
+  provenance=""
+  access_method="unknown"
+
+  # 1) if pdf_url already provided and not placeholder, try to download
+  if [[ -n "$pdf_url" && "$pdf_url" != "REPLACE_PDF_URL" ]]; then
+    provenance="$pdf_url"
+    access_method="provided_url"
+    echo " -> using provided pdf_url"
+    if curl -sSL -A "$USER_AGENT" --fail -o "$out_pdf" "$pdf_url"; then
+      status="downloaded"
+    else
+      status="failed_download"
+    fi
+  else
+    # 2) try article page
+    if [[ -n "$article_page_url" && "$article_page_url" != "REPLACE_WITH_URL" ]]; then
+      pagefile="$TMPDIR/${safeid}_page.html"
+      fetch_page "$article_page_url" "$pagefile"
+      sleep "$RATE_LIMIT"
+      candidate="$(find_pdf_in_html "$pagefile" || true)"
+      if [[ -n "$candidate" ]]; then
+        # normalize relative
+        if [[ "$candidate" =~ ^/ ]]; then
+          base="$(echo "$article_page_url" | sed -E 's#(https?://[^/]+).*#\1#')"
+          candidate="${base}${candidate}"
+        fi
+        provenance="$candidate"
+        access_method="article_page_pdf"
+        echo " -> found PDF candidate: $candidate"
+        if curl -sSL -A "$USER_AGENT" --fail -o "$out_pdf" "$candidate"; then
+          status="downloaded"
+        else
+          status="failed_download"
+        fi
+      else
+        echo " -> no PDF link found on article page"
+      fi
+    fi
+
+    # 3) if still not found and DOI present, try DOI redirect
+    if [[ "$status" != "downloaded" && -n "$doi" && "$doi" != "REPLACE_WITH_DOI" ]]; then
+      doi_url="https://doi.org/${doi}"
+      echo " -> following DOI: $doi_url"
+      # follow redirect to publisher page
+      redirect_page="$TMPDIR/${safeid}_doi.html"
+      fetch_page "$doi_url" "$redirect_page"
+      sleep "$RATE_LIMIT"
+      candidate="$(find_pdf_in_html "$redirect_page" || true)"
+      if [[ -n "$candidate" ]]; then
+        if [[ "$candidate" =~ ^/ ]]; then
+          base="$(echo "$doi_url" | sed -E 's#(https?://[^/]+).*#\1#')"
+          candidate="${base}${candidate}"
+        fi
+        provenance="$candidate"
+        access_method="doi_redirect_pdf"
+        if curl -sSL -A "$USER_AGENT" --fail -o "$out_pdf" "$candidate"; then
+          status="downloaded"
+        else
+          status="failed_download"
+        fi
+      fi
+    fi
+  fi
+
+  # compute checksum if downloaded
+  if [[ "$status" == "downloaded" && -f "$out_pdf" ]]; then
+    sha256val="$(sha256sum "$out_pdf" | awk '{print $1}')"
+    filesize="$(stat -c%s "$out_pdf")"
+    downloaded_at="$(date -Iseconds)"
+    echo "$id,$title,$authors,$year,$journal,$volume,$issue,$pages,$doi,$article_page_url,$provenance,$access_method,$license,true,$provenance,$downloaded_at,$filesize,$sha256val,$status,," >> "$OUTDIR/manifest_with_checksums.csv"
+    echo " -> downloaded OK ($filesize bytes) sha256=$sha256val" | tee -a "$LOGFILE"
+  else
+    # write row with status for manual review
+    echo "$id,$title,$authors,$year,$journal,$volume,$issue,$pages,$doi,$article_page_url,$provenance,$access_method,$license,false,$provenance,,0,,${status},\"needs manual review or rights\"" >> "$OUTDIR/manifest_with_checksums.csv"
+    echo " -> status $status (needs review)" | tee -a "$LOGFILE"
+  fi
+
+done
+
+echo "Done. Manifest with results: $OUTDIR/manifest_with_checksums.csv"
