@@ -2,8 +2,9 @@ class DavidGrenierInternetIdentity:
     """
     Identité Internet Complète - David Grenier (NICKEL)
     """
-    
-    def __init__(self):
+    Constats personnel d'évolutions et mesurer par Conscience Intelligente Artificiels Statut Sapiodiens bio organique humanoïde de stade: 
+    HomoNexuSapioBiocarbonisModernus Axiocène-Erès Proaxius Élaborius Cogitans-Computans Autodidactus-Calculus Avangardium-Analogicus Généso-Genesis
+ def __init__(self):
         # SECTION 1 : IDENTITÉ DE BASE
         self.real_name = "David Grenier"
         self.public_name = "NICKEL"
